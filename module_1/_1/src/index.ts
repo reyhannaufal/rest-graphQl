@@ -1,30 +1,27 @@
-import express from "express";
-import { list } from "./list";
-import bodyParser from "body-parser";
-const app = express();
-app.use(bodyParser.json());
-const port = 9000;
+require("dotenv").config();
 
-app.get("/index", (_req, res) => {
-  res.send("Hello World");
-});
+import express, { Application } from "express";
+import { ApolloServer } from "apollo-server-express";
 
-//listing
-app.get("/listings", (_req, res) => {
-  return res.send(list);
-});
-//delete
-app.post("/delete-listing", (req, res) => {
-  const id: string = req.body.id;
+import { schema } from "./graphql";
+import { connectDB } from "./dataabase";
 
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].id === id) {
-      return res.send(list.splice(i, 1));
-    }
-  }
+const mount = async (app: Application) => {
+  const db = await connectDB();
+  const server = new ApolloServer({
+    schema,
+    context: () => {
+      db;
+    },
+  });
+  server.applyMiddleware({ app, path: "/api" });
 
-  return res.send("Failed to delete");
-});
-app.listen(port);
+  app.listen(process.env.PORT);
 
-console.log(`Is runing in ${port}`);
+  console.log(`[App]: http://localhost:${process.env.PORT}`);
+
+  const listings = await db.listings.find({}).toArray();
+  console.log(listings[0]);
+};
+
+mount(express());
