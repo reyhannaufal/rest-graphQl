@@ -1,6 +1,6 @@
 ## Getting Started
 
-Repositori perbandingan anatara pengunaan REST dan GraphQl.
+Repositori perbandingan pengunaan REST dan GraphQl.
 
 ## Installation
 
