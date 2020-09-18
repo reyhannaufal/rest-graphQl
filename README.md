@@ -20,5 +20,5 @@ npm start
 npm build
 
 # manually send data to mongodb atlas
-yarn seed
+npm seed
 ```
