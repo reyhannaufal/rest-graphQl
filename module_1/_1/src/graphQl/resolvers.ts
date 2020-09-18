@@ -1,22 +1,29 @@
 import { IResolvers } from "apollo-server-express";
-import { list } from "../list";
+import { ObjectID } from "mongodb";
+import { Database } from "../lib/type";
 
 export const resolvers: IResolvers = {
   Query: {
-    listings: () => {
-      return list;
+    listings: async (_root: undefined, _args: {}, { db }: { db: Database }) => {
+      return await db.listings.find({}).toArray();
     },
   },
   Mutation: {
     deleteListing: {
-      resolve: (_root: undefined, { id }: { id: string }) => {
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].id === id) {
-            return list.splice(i, 1)[0];
-          }
+      resolve: (
+        _root: undefined,
+        { id }: { id: string },
+        { db }: { db: Database }
+      ) => {
+        const deleteRes = await db.listings.findOneAndDelete({
+          _id: new ObjectID(id),
+        });
+
+        if (!deleteRes.value) {
+          throw new Error("Failde to delete listings!");
         }
 
-        throw new Error("Failed to delate");
+        return deleteRes.value;
       },
     },
   },

@@ -1,13 +1,14 @@
-import { Collection } from "mongodb";
+import { Collection, ObjectID } from "mongodb";
 
 export interface Listing {
-  _id: string;
+  _id: ObjectID;
   title: string;
   image: string;
-  adress: string;
+  address: string;
   price: number;
   numOfGuests: number;
   numOfBeds: number;
+  numOfBaths: number;
   rating: number;
 }
 
